@@ -1,23 +1,19 @@
 package org.farlon.webservice;
 
-import javafx.util.Duration;
-import javax.xml.ws.Endpoint;
+import com.sun.net.httpserver.HttpServer;
+import java.net.URI;
+import javax.ws.rs.core.UriBuilder;
+import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
 
 public class SimpleServer {
 
-  protected SimpleServer() throws Exception {
-    System.out.println("Starting Server...");
-    Object implementor = new SimpleWebService();
-    String address = "http://localhost:9090/farlon";
-    Endpoint.publish(address, implementor);
-  }
+  private static final int port = 9998;
+  private static final String host = "http://localhost/";
 
-  public static void main(String args[]) throws Exception {
-    new SimpleServer();
-    System.out.println("Server up!");
-
-    Thread.sleep((long) Duration.minutes(30).toMillis());
-    System.out.println("Server exiting...");
-    System.exit(0);
+  public static void main(String[] args) {
+    URI baseUri = UriBuilder.fromUri(host).port(port).build();
+    ResourceConfig config = new ResourceConfig(SimpleWebService.class);
+    HttpServer server = JdkHttpServerFactory.createHttpServer(baseUri, config);
   }
 }
